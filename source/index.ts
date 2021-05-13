@@ -4,9 +4,9 @@ let nbc = new NaiveBayesClassifier()
 
 nbc.loadDataset('./iris.json')
 
-for (let i = 0; i < 2; i++) {
+for (let i = 0; i < 10; i++) {
     let j = Math.floor(Math.random() * nbc.noOfSamples)
 
-    let probabilities = nbc.computeClassProbabilities(nbc.dataset[j])
-    console.log(probabilities, nbc.dataset[j].category);
+    let prediction = nbc.predict(nbc.dataset[j])
+    console.log(prediction, nbc.dataset[j].category);
 }
