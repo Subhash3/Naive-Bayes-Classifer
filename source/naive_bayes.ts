@@ -14,6 +14,7 @@ class NaiveBayesClassifier {
     }
 
     loadDatasetFromFile(file: string) {
+        /* Loads the dataset from a json file of data samples*/
         try {
             this.dataset = JSON.parse(fs.readFileSync(file).toString())
             this.noOfSamples = this.dataset.length
@@ -27,6 +28,7 @@ class NaiveBayesClassifier {
     }
 
     loadDataset(data: IFC_Iris_Data_Sample[]) {
+        /* Assign the dataset to be an array of pre-loaded samples*/
         this.dataset = data
         this.noOfSamples = this.dataset.length
         if (this.dataset.length > 0) {
@@ -35,11 +37,8 @@ class NaiveBayesClassifier {
     }
 
 
-    describeData(dataset: IFC_Iris_Data_Sample[] = this.dataset, display: boolean = true): IFC_Summary {
-        let noOfFeatures = 0
-        if (dataset.length > 0) {
-            noOfFeatures = dataset[0].features.length
-        }
+    private describeData(dataset: IFC_Iris_Data_Sample[], display: boolean = true): IFC_Summary {
+        let noOfFeatures = (dataset.length > 0) ? dataset[0].features.length : 0
 
         let summary: IFC_Summary = {
             noOfSamples: dataset.length,
@@ -50,7 +49,7 @@ class NaiveBayesClassifier {
 
 
         // Iterate over each feature
-        for (let i = 0; i < this.noOfFeatures; i++) {
+        for (let i = 0; i < noOfFeatures; i++) {
             let featureValues: number[] = []
 
             // Accumulate the values of feature i 
@@ -66,7 +65,7 @@ class NaiveBayesClassifier {
 
         if (display) {
             console.log("No. of samples: ", summary.noOfSamples)
-            for (let i = 0; i < this.noOfFeatures; i++) {
+            for (let i = 0; i < noOfFeatures; i++) {
                 console.log(`Mean of ${i}th feature's values: ${summary.mean[i]}`)
                 console.log(`Standard Deviation of ${i}th feature's values: ${summary.stddev[i]}`)
             }
@@ -75,10 +74,10 @@ class NaiveBayesClassifier {
         return summary
     }
 
-    separateByClass() {
+    private separateByClass(dataset: IFC_Iris_Data_Sample[]) {
         let separatedByClass: { [category: string]: IFC_Iris_Data_Sample[] } = {}
 
-        for (let dataSample of this.dataset) {
+        for (let dataSample of dataset) {
             let { category } = dataSample
 
             if (!(category in separatedByClass)) {
@@ -92,8 +91,8 @@ class NaiveBayesClassifier {
         return separatedByClass
     }
 
-    describeByClass(display: boolean = false): IFC_Summary_By_Class {
-        let separatedByClass = this.separateByClass()
+    private describeByClass(display: boolean = false): IFC_Summary_By_Class {
+        let separatedByClass = this.separateByClass(this.dataset)
         let categories = Object.keys(separatedByClass)
         let summaryByClass: IFC_Summary_By_Class = {}
 
@@ -107,16 +106,22 @@ class NaiveBayesClassifier {
         return summaryByClass
     }
 
-    computeClassProbabilities(newSample: IFC_Iris_Data_Sample) {
+    private computeClassProbabilities(newSample: IFC_Iris_Data_Sample) {
         let summaryByClass: IFC_Summary_By_Class = this.describeByClass()
         let probabilities: { [category: string]: number } = {}
 
         let categories = Object.keys(summaryByClass)
 
+
+        /* P(class/X) = P(x1/class)*P(x2/class) * .... * P(xn/class) * P(C) */
+
         for (let category of categories) {
-            probabilities[category] = summaryByClass[category].noOfSamples / this.noOfSamples
+            // Prior Probability
+            let priorProbability = summaryByClass[category].noOfSamples / this.noOfSamples
+
             let summary = summaryByClass[category]
 
+            // Bayes Chain
             for (let i = 0; i < summary.noOfFeatures; i++) {
                 let m = summary.mean[i]
                 let s = summary.stddev[i]
@@ -124,13 +129,25 @@ class NaiveBayesClassifier {
 
                 probabilities[category] *= p
             }
+
+            probabilities[category] *= priorProbability
         }
 
         return probabilities
     }
 
-    predict(newSample: IFC_Iris_Data_Sample) {
+    /*Computes the mean and standard deviation of different features of each category*/
+    train() {
+        this.describeByClass()
+    }
+
+    /* Returns the probability of each class given a new data sample */
+    predict(newSample: IFC_Iris_Data_Sample, returnProbabilities: boolean = false) {
         let probabilities = this.computeClassProbabilities(newSample)
+
+        if (returnProbabilities) {
+            return [customArgmax(probabilities), probabilities]
+        }
 
         return customArgmax(probabilities)
     }

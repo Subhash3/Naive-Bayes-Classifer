@@ -39,3 +39,14 @@ export const shuffleArray = (array: any[]) => {
 
     return array;
 }
+
+export const splitArr = (array: any[], ratio: number) => {
+    let n = array.length
+
+    let m = floor(n * ratio)
+
+    let firstPart: any[] = array.slice(0, m)
+    let secondPart: any[] = array.slice(m, n)
+
+    return [firstPart, secondPart]
+}
