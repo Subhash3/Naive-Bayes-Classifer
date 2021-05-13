@@ -13,7 +13,7 @@ class NaiveBayesClassifier {
         this.dataset = []
     }
 
-    loadDataset(file: string) {
+    loadDatasetFromFile(file: string) {
         try {
             this.dataset = JSON.parse(fs.readFileSync(file).toString())
             this.noOfSamples = this.dataset.length
@@ -25,6 +25,15 @@ class NaiveBayesClassifier {
             console.log("Error loading dataset!!", err.message)
         }
     }
+
+    loadDataset(data: IFC_Iris_Data_Sample[]) {
+        this.dataset = data
+        this.noOfSamples = this.dataset.length
+        if (this.dataset.length > 0) {
+            this.noOfFeatures = this.dataset[0].features.length
+        }
+    }
+
 
     describeData(dataset: IFC_Iris_Data_Sample[] = this.dataset, display: boolean = true): IFC_Summary {
         let noOfFeatures = 0
@@ -83,14 +92,14 @@ class NaiveBayesClassifier {
         return separatedByClass
     }
 
-    describeByClass(): IFC_Summary_By_Class {
+    describeByClass(display: boolean = false): IFC_Summary_By_Class {
         let separatedByClass = this.separateByClass()
         let categories = Object.keys(separatedByClass)
         let summaryByClass: IFC_Summary_By_Class = {}
 
         for (let category of categories) {
             let samples = separatedByClass[category]
-            let summary = this.describeData(samples, false)
+            let summary = this.describeData(samples, display)
 
             summaryByClass[category] = summary
         }
@@ -103,7 +112,7 @@ class NaiveBayesClassifier {
         let probabilities: { [category: string]: number } = {}
 
         let categories = Object.keys(summaryByClass)
-        let noOfClasses = categories.length
+
         for (let category of categories) {
             probabilities[category] = summaryByClass[category].noOfSamples / this.noOfSamples
             let summary = summaryByClass[category]
