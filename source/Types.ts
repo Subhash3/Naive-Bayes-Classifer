@@ -5,6 +5,7 @@ export interface IFC_Iris_Data_Sample {
 
 export interface IFC_Summary {
     noOfSamples: number,
+    noOfFeatures: number,
     mean: number[],
     stddev: number[]
 }

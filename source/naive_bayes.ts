@@ -27,8 +27,14 @@ class NaiveBayesClassifier {
     }
 
     describeData(dataset: IFC_Iris_Data_Sample[] = this.dataset, display: boolean = true): IFC_Summary {
+        let noOfFeatures = 0
+        if (dataset.length > 0) {
+            noOfFeatures = dataset[0].features.length
+        }
+
         let summary: IFC_Summary = {
             noOfSamples: dataset.length,
+            noOfFeatures,
             mean: [] as number[], // mean of values of each feature
             stddev: [] as number[], // standard deviation of values each feature
         }
@@ -102,7 +108,7 @@ class NaiveBayesClassifier {
             probabilities[category] = summaryByClass[category].noOfSamples / this.noOfSamples
             let summary = summaryByClass[category]
 
-            for (let i = 0; i < noOfClasses; i++) {
+            for (let i = 0; i < summary.noOfFeatures; i++) {
                 let m = summary.mean[i]
                 let s = summary.stddev[i]
                 let p = gaussianPdf(newSample.features[i], m, s)
