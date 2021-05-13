@@ -36,6 +36,39 @@ class NaiveBayesClassifier {
         }
     }
 
+    loadDatasetFromArr(data: (string[])[]) {
+        /* Load the dataset from an array(array(strings)) 
+            Something like this
+            [
+                ["1.0", "3.2", "6.9",    "4.20"],
+                ["1.0", "3.2", "6.9",    "4.20"],
+                ["1.0", "3.2", "6.9",    "4.20"],
+                <--    Features   --> <- Category ->
+            ]
+        */
+        let noOfSamples = 0
+        let noOfFeatures = 0
+
+        noOfSamples = data.length
+        noOfFeatures = (noOfSamples > 0) ? data[0].length - 1 : 0
+        let dataset: IFC_Iris_Data_Sample[] = []
+
+        for (let row of data) {
+            let features: number[] = row.slice(0, noOfFeatures).map(num => parseFloat(num))
+            let category: string = row[noOfFeatures]
+            let dataSample: IFC_Iris_Data_Sample = {
+                features,
+                category
+            }
+
+            dataset.push(dataSample)
+        }
+
+        this.noOfSamples = noOfSamples
+        this.noOfFeatures = noOfFeatures
+        this.dataset = dataset
+    }
+
     private extractAllCategories(data: IFC_Iris_Data_Sample[]) {
         let allCategories: Set<string> = new Set<string>()
 

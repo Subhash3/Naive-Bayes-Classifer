@@ -18,6 +18,17 @@
 
     /* Computes the probability of each class given a new data sample by using bayes theorem */
     predict(newSample: IFC_Iris_Data_Sample, returnProbabilities: boolean = false);
+
+    /* Loads the dataset from an array(array(strings)) 
+        Something like this
+        [
+            ["1.0", "3.2", "6.9",    "4.20"],
+            ["1.0", "3.2", "6.9",    "4.20"],
+            ["1.0", "3.2", "6.9",    "4.20"],
+            <--   Features   --> <- Category ->
+        ]
+    */
+    loadDatasetFromArr(data: (string[])[]);
 ```
 
 
@@ -64,6 +75,8 @@ dataset = [
 ```
 
 ### TODO
+    - [x] Loss Computation.
+    - [ ] Apply log to bayes chain to get rid of overflow errors.
     - [ ] Document the code nicely in tsdoc format.
     - [ ] Use a matrix of size mxn where m is the no.of categories and n is the number of features such that the location [i][j] contains the mean and standard deviation of ith feature, given class = j.
     - [ ] Extend the classifier to text classification.
