@@ -1,14 +1,24 @@
 {
   "name": "Naive-Bayes-Classifier",
   "version": "1.0.0",
-  "description": "",
+  "description": "Implementation of Naive-Bayes-Classifier in typescript from scratch.",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Subhash3/Naive-Bayes-Classifier"
+  },
   "scripts": {
     "devStart": "ts-node source/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf build/ && tsc"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Naive Bayes Classifier",
+    "typescript",
+    "nodejs",
+    "Machine Learning"
+  ],
+  "author": "Subhash Sarangi",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^15.0.2",

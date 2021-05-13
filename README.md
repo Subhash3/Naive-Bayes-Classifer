@@ -67,3 +67,5 @@ dataset = [
     - [ ] Document the code nicely in tsdoc format.
     - [ ] Use a matrix of size mxn where m is the no.of categories and n is the number of features such that the location [i][j] contains the mean and standard deviation of ith feature, given class = j.
     - [ ] Extend the classifier to text classification.
+
+#### Feel free to contribute and open any issues.
