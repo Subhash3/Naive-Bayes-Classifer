@@ -61,7 +61,7 @@ class NaiveBayesClassifier {
     }
 
     separateByClass() {
-        let separatedByClass: any = {}
+        let separatedByClass: { [category: string]: IFC_Iris_Data_Sample[] } = {}
 
         for (let dataSample of this.dataset) {
             let { category } = dataSample
@@ -94,7 +94,7 @@ class NaiveBayesClassifier {
 
     computeClassProbabilities(newSample: IFC_Iris_Data_Sample) {
         let summaryByClass: IFC_Summary_By_Class = this.describeByClass()
-        let probabilities: any = {}
+        let probabilities: { [category: string]: number } = {}
 
         let categories = Object.keys(summaryByClass)
         let noOfClasses = categories.length

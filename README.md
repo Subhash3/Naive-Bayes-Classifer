@@ -31,5 +31,7 @@ dataset = [
 ]
 ```
 
+![alt text](https://github.com/Subhash3/Naive-Bayes-Classifer/blob/main/math.png?raw=true)
+
 ### API
 * Comin' up.....
