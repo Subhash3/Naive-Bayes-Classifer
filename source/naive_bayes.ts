@@ -125,34 +125,41 @@ class NaiveBayesClassifier {
         return target
     }
 
-    private computeLoss() {
-        let allCategories = this.extractAllCategories(this.dataset)
-        let loss = 0
+    computeLoss() {
+        // let allCategories = this.extractAllCategories(this.dataset)
+        let inCorrect = 0
 
         for (let sample of this.dataset) {
-            let probabilities = this.computeClassProbabilities(sample)
-            let target = this.getTargetVector(sample.category, allCategories)
+            let prediction: any = this.predict(sample)
+            // console.log(prediction[0], sample.category, prediction[0] == sample.category)
+            if (prediction[0] != sample.category) {
+                inCorrect += 1
+            }
+        }
+        // console.log({ inCorrect })
+        return inCorrect * 100 / this.noOfSamples
+    }
 
-            // console.log(probabilities, target);
+    computeAccuracy() {
+        let loss = this.computeLoss()
 
-            let error = 0
-            Object.keys(probabilities).forEach(key => {
-                let p = parseFloat(probabilities[key].toFixed(5))
-                let t = parseFloat(target[key].toFixed(5))
+        return 100 - loss
+    }
 
-                if (t == 1) {
-                    error = 0
-                    return
-                }
+    private applySoftMax(output: { [category: string]: number }) {
+        let keys = Object.keys(output)
+        let values = Object.values(output)
 
-                error += (t - p)
-                // console.log({ p, t, error });
-            })
-            // console.log({ error });
-            loss += (error * error)
+        // Applying softmax twice inorder to bring the probabilities to a reasonable range
+        let softMaxedValues = nj.softmax(values)
+        softMaxedValues = nj.softmax(softMaxedValues)
+
+        let revised: { [category: string]: number } = {}
+        for (let i = 0; i < keys.length; i++) {
+            revised[keys[i]] = softMaxedValues.get(i)
         }
 
-        return loss * 100 / this.noOfSamples
+        return revised
     }
 
     private computeClassProbabilities(newSample: IFC_Iris_Data_Sample) {
@@ -167,7 +174,7 @@ class NaiveBayesClassifier {
         for (let category of categories) {
             // Prior Probability
             let priorProbability = summaryByClass[category].noOfSamples / this.noOfSamples
-            probabilities[category] = priorProbability
+            probabilities[category] = Math.log10(priorProbability)
 
             let summary = summaryByClass[category]
 
@@ -177,9 +184,11 @@ class NaiveBayesClassifier {
                 let s = summary.stddev[i]
                 let p = gaussianPdf(newSample.features[i], m, s)
 
-                probabilities[category] *= p
+                probabilities[category] += Math.log10(p)
             }
         }
+
+        probabilities = this.applySoftMax(probabilities)
 
         return probabilities
     }
@@ -197,7 +206,7 @@ class NaiveBayesClassifier {
             return [customArgmax(probabilities), probabilities]
         }
 
-        return customArgmax(probabilities)
+        return [customArgmax(probabilities), null]
     }
 }
 
