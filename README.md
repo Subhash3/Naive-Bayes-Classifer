@@ -21,7 +21,7 @@
 ```
 
 ### Dataset format
-* A dataset is a list of datasample of the following interface
+* A dataset is a list of data samples of the following interface
 ```ts
 interface IFC_Iris_Data_Sample {
     features: number[],
@@ -48,6 +48,6 @@ dataset = [
 ```
 
 ### TODO
-    - [ ] Add nice documentation in tsdoc format.
-    - [ ] Use a matrix of size mxn where m is the no.of categories and n is the number of features such that [i][j] location contains the mean and standard devaiation of ith feature given class = j.
-    - [ ]  Extend the classifier to text classification.
+    - [ ] Document the code nicely in tsdoc format.
+    - [ ] Use a matrix of size mxn where m is the no.of categories and n is the number of features such that the location [i][j] contains the mean and standard deviation of ith feature, given class = j.
+    - [ ] Extend the classifier to text classification.
