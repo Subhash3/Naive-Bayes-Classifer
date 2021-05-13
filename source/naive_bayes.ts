@@ -36,6 +36,15 @@ class NaiveBayesClassifier {
         }
     }
 
+    private extractAllCategories(data: IFC_Iris_Data_Sample[]) {
+        let allCategories: Set<string> = new Set<string>()
+
+        for (let sample of data) {
+            allCategories.add(sample.category)
+        }
+
+        return Array.from(allCategories)
+    }
 
     private describeData(dataset: IFC_Iris_Data_Sample[], display: boolean = true): IFC_Summary {
         let noOfFeatures = (dataset.length > 0) ? dataset[0].features.length : 0
@@ -106,6 +115,46 @@ class NaiveBayesClassifier {
         return summaryByClass
     }
 
+    private getTargetVector(category: string, allCategories: string[]) {
+        let target: { [key: string]: number } = {}
+
+        for (let c of allCategories) {
+            target[c] = (c == category) ? 1 : 0
+        }
+
+        return target
+    }
+
+    private computeLoss() {
+        let allCategories = this.extractAllCategories(this.dataset)
+        let loss = 0
+
+        for (let sample of this.dataset) {
+            let probabilities = this.computeClassProbabilities(sample)
+            let target = this.getTargetVector(sample.category, allCategories)
+
+            // console.log(probabilities, target);
+
+            let error = 0
+            Object.keys(probabilities).forEach(key => {
+                let p = parseFloat(probabilities[key].toFixed(5))
+                let t = parseFloat(target[key].toFixed(5))
+
+                if (t == 1) {
+                    error = 0
+                    return
+                }
+
+                error += (t - p)
+                // console.log({ p, t, error });
+            })
+            // console.log({ error });
+            loss += (error * error)
+        }
+
+        return loss * 100 / this.noOfSamples
+    }
+
     private computeClassProbabilities(newSample: IFC_Iris_Data_Sample) {
         let summaryByClass: IFC_Summary_By_Class = this.describeByClass()
         let probabilities: { [category: string]: number } = {}
@@ -118,6 +167,7 @@ class NaiveBayesClassifier {
         for (let category of categories) {
             // Prior Probability
             let priorProbability = summaryByClass[category].noOfSamples / this.noOfSamples
+            probabilities[category] = priorProbability
 
             let summary = summaryByClass[category]
 
@@ -129,8 +179,6 @@ class NaiveBayesClassifier {
 
                 probabilities[category] *= p
             }
-
-            probabilities[category] *= priorProbability
         }
 
         return probabilities
@@ -138,7 +186,7 @@ class NaiveBayesClassifier {
 
     /*Computes the mean and standard deviation of different features of each category*/
     train() {
-        this.describeByClass()
+        return this.computeLoss()
     }
 
     /* Returns the probability of each class given a new data sample */
