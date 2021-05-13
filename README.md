@@ -20,6 +20,22 @@
     predict(newSample: IFC_Iris_Data_Sample, returnProbabilities: boolean = false);
 ```
 
+
+### How to run?
+```bash
+    # Install npm dependencies
+    git clone https://github.com/Subhash3/Naive-Bayes-Classifier
+    cd Naive-Bayes-Classifier
+    npm install
+
+    # Start
+    ts-node source/index.js
+
+    # Build: Compile ts to generate js files
+    npm run build # this creates a build/ folder with all the compiled (js) code
+```
+
+
 ### Dataset format
 * A dataset is a list of data samples of the following interface
 ```ts
