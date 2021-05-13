@@ -1,7 +1,7 @@
 import { IFC_Iris_Data_Sample, IFC_Summary, IFC_Summary_By_Class } from './Types'
 import * as nj from "numjs"
 import fs from 'fs'
-import { gaussianPdf } from './helpers'
+import { gaussianPdf, customArgmax } from './helpers'
 
 
 class NaiveBayesClassifier {
@@ -118,6 +118,12 @@ class NaiveBayesClassifier {
         }
 
         return probabilities
+    }
+
+    predict(newSample: IFC_Iris_Data_Sample) {
+        let probabilities = this.computeClassProbabilities(newSample)
+
+        return customArgmax(probabilities)
     }
 }
 
